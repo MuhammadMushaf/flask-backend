@@ -1,5 +1,5 @@
 from flask_marshmallow import Marshmallow
-from models import User, Product, Stories, Video, Bubble
+from models import User, Product, Stories, Video, Bubble , Settings
 
 ma = Marshmallow()
 
@@ -22,3 +22,6 @@ class VideoSchema(ma.SQLAlchemyAutoSchema):
 class BubbleSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Bubble
+class SettingsSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Settings
