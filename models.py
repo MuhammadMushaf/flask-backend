@@ -60,6 +60,7 @@ class Video(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     story_id = db.Column(db.Integer, db.ForeignKey('stories.id'), nullable=False)
     video_url = db.Column(db.String(200))
+    mux_playback_id = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
