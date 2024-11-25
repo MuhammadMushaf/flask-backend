@@ -18,8 +18,9 @@ def signup():
     user.set_password(data['password'])
     db.session.add(user)
     db.session.commit()
-    
-    return jsonify(UserSchema().dump(user)), 201
+    access_token = create_access_token(identity=user.id)
+    return jsonify(access_token=access_token), 201
+
 
 @auth_bp.route('/signin', methods=['POST'])
 def signin():

@@ -3,6 +3,8 @@ from flask_bcrypt import Bcrypt
 from datetime import datetime
 from enum import Enum
 
+from sqlalchemy import JSON
+
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
@@ -34,8 +36,8 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500))
     price = db.Column(db.Float, nullable=False)
-    category = db.Column(db.String(50))
-    image_url = db.Column(db.String(200))
+    # category = db.Column(db.String(50))
+    photo_url = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -46,14 +48,15 @@ class StoryType(Enum):
 
 class Stories(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(500))
-    type = db.Column(db.Enum(StoryType), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=True)
-    cta_text = db.Column(db.String(200), nullable=True)
-    cta_link = db.Column(db.String(200), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    type = db.Column(db.Enum('shoppable', 'cta', name='story_type'), nullable=False)
+    product_ids = db.Column(JSON, nullable=True)  # For shoppable stories
+    cta_text = db.Column(db.String(255), nullable=True)  # For CTA stories
+    cta_link = db.Column(db.String(255), nullable=True)  # For CTA stories
+    video_id = db.Column(db.Integer, db.ForeignKey('videos.id'), nullable=True)  # Linked video
+    created_at = db.Column(db.DateTime, default=db.func.now())
+    updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
 
 
 class Video(db.Model):
