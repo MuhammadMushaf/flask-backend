@@ -13,7 +13,7 @@ product_list_schema = ProductSchema(many=True)
 @jwt_required()
 def get_products():
     # products = get_shopify_products()
-    products = Product.query.all()
+    products = Product.query.limit(4).all()
     product_schema = ProductSchema(many=True)
     serialized_products = product_schema.dump(products)
     return jsonify(serialized_products), 200
