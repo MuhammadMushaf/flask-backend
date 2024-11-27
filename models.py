@@ -112,7 +112,7 @@ class Video(db.Model):
 class Bubble(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    size = db.Column(db.Integer)
+    size = db.Column(db.String(100))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     items = db.relationship('BubbleItem', backref='bubble', cascade="all, delete-orphan")
