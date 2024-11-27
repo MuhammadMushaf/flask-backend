@@ -97,6 +97,8 @@
 
 
 
+from datetime import datetime
+import uuid
 from flask import Blueprint, current_app, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import Product, db, Stories, Video
@@ -239,11 +241,37 @@ def save_to_db(instances):
 
 
 
+def save_video_to_server(video_file):
+    """Saves the video file to the server with a unique name and returns its URL."""
+    try:
+        # Define the directory to save videos
+        upload_dir = os.path.join(current_app.root_path, 'videos')
+        os.makedirs(upload_dir, exist_ok=True)  # Create directory if it doesn't exist
+
+        # Get the original file extension
+        file_extension = os.path.splitext(video_file.filename)[1]
+
+        # Generate a secure and unique filename
+        unique_name = f"{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex}{file_extension}"
+        filename = secure_filename(unique_name)  # Ensure the name is safe
+        file_path = os.path.join(upload_dir, filename)
+
+        # Save the file to the defined path
+        video_file.save(file_path)
+
+        # Return the relative URL of the video
+        return f"/videos/{filename}"
+    except Exception as e:
+        raise Exception(f"Failed to save video file: {str(e)}")
+
+
 # def save_video_to_server(video_file):
-#     """Saves the video file to the server and returns its URL."""
+#     """Saves the video file to the parent directory of the backend folder and returns its URL."""
 #     try:
-#         # Define the directory to save videos
-#         upload_dir = os.path.join(current_app.root_path, 'videos')
+#         # Define the directory to save videos in the parent folder
+#         backend_root = current_app.root_path  # Current backend folder
+#         parent_dir = os.path.dirname(backend_root)  # Parent directory of backend folder
+#         upload_dir = os.path.join(parent_dir, 'videos')  # Create 'videos' folder in the parent directory
 #         os.makedirs(upload_dir, exist_ok=True)  # Create directory if it doesn't exist
 
 #         # Save the file with a secure name
@@ -255,26 +283,6 @@ def save_to_db(instances):
 #         return f"/videos/{filename}"
 #     except Exception as e:
 #         raise Exception(f"Failed to save video file: {str(e)}")
-
-
-def save_video_to_server(video_file):
-    """Saves the video file to the parent directory of the backend folder and returns its URL."""
-    try:
-        # Define the directory to save videos in the parent folder
-        backend_root = current_app.root_path  # Current backend folder
-        parent_dir = os.path.dirname(backend_root)  # Parent directory of backend folder
-        upload_dir = os.path.join(parent_dir, 'videos')  # Create 'videos' folder in the parent directory
-        os.makedirs(upload_dir, exist_ok=True)  # Create directory if it doesn't exist
-
-        # Save the file with a secure name
-        filename = secure_filename(video_file.filename)
-        file_path = os.path.join(upload_dir, filename)
-        video_file.save(file_path)
-
-        # Return the relative URL of the video
-        return f"/videos/{filename}"
-    except Exception as e:
-        raise Exception(f"Failed to save video file: {str(e)}")
 
 
 
@@ -332,3 +340,5 @@ def delete_story(id):
     db.session.delete(story)
     db.session.commit()
     return jsonify({"msg": "Story deleted"}), 200
+
+

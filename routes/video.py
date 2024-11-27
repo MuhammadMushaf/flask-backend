@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+import os
+from flask import Blueprint, request, jsonify,send_from_directory, current_app
 from flask_jwt_extended import jwt_required
 from models import db, Video
 from schemas import VideoSchema
@@ -34,3 +35,12 @@ def delete_video(id):
     db.session.delete(video)
     db.session.commit()
     return jsonify({"msg": "Video deleted"}), 200
+
+
+@video_bp.route('/videos/<path:filename>')
+def serve_video(filename):
+    """
+    Serves video files from the 'videos' directory.
+    """
+    videos_dir = os.path.join(current_app.root_path, 'videos')
+    return send_from_directory(videos_dir, filename)
