@@ -8,50 +8,6 @@ bubbles_bp = Blueprint('bubbles', __name__)
 bubble_schema = BubbleSchema()
 bubble_list_schema = BubbleSchema(many=True)
 
-# Get all bubbles
-# @bubbles_bp.route('/bubbles', methods=['GET'])
-# @jwt_required()
-# def get_bubbles():
-#     bubbles = Bubble.query.all()
-#     return jsonify(bubble_list_schema.dump(bubbles)), 200
-
-# Create a new bubble
-# @bubbles_bp.route('/bubbles', methods=['POST'])
-# @jwt_required()
-# def create_bubble():
-#     data = request.get_json()
-#     bubble = Bubble(**data)
-#     db.session.add(bubble)
-#     db.session.commit()
-#     return jsonify(bubble_schema.dump(bubble)), 201
-# @bubbles_bp.route('/bubbles', methods=['POST'])
-# @jwt_required()
-# def create_bubble():
-#     data = request.json
-#     title = data.get('title')
-#     size = data.get('size')
-#     items = data.get('items')  # List of story IDs with order [{ "story_id": 1, "order": 1 }, ...]
-
-#     if not title:
-#         return jsonify({"error": "Title is required"}), 400
-
-#     bubble = Bubble(title=title, size=size)
-#     db.session.add(bubble)
-#     db.session.flush()
-
-#     for item in items:
-#         bubble_item = BubbleItem(
-#             bubble_id=bubble.id,
-#             story_id=item.get('story_id'),
-#             order=item.get('order')
-#         )
-#         db.session.add(bubble_item)
-
-#     db.session.commit()
-#     return jsonify({"id": bubble.id, "message": "Bubble created successfully"}), 201
-
-
-
 @bubbles_bp.route('/bubbles', methods=['POST'])
 @jwt_required()
 def create_bubble():
@@ -82,49 +38,6 @@ def create_bubble():
         db.session.rollback()
         return jsonify({"message": "An unexpected error occurred", "error": str(e)}), 500
 
-
-# @bubbles_bp.route('/bubbles/<int:bubble_id>', methods=['PUT'])
-# def update_bubble(bubble_id):
-#     data = request.json
-#     bubble = Bubble.query.get_or_404(bubble_id)
-
-#     bubble.title = data.get('title', bubble.title)
-#     bubble.size = data.get('size', bubble.size)
-
-#     items = data.get('items')  # Updated items
-#     if items:
-#         BubbleItem.query.filter_by(bubble_id=bubble_id).delete()
-#         for item in items:
-#             bubble_item = BubbleItem(
-#                 bubble_id=bubble.id,
-#                 story_id=item.get('story_id'),
-#                 order=item.get('order')
-#             )
-#             db.session.add(bubble_item)
-
-#     db.session.commit()
-#     return jsonify({"message": "Bubble updated successfully"}), 200
-
-
-# @bubbles_bp.route('/bubbles', methods=['GET'])
-# def get_all_bubbles():
-#     bubbles = Bubble.query.all()
-#     result = []
-#     for bubble in bubbles:
-#         result.append({
-#             "id": bubble.id,
-#             "title": bubble.title,
-#             "size": bubble.size,
-#             "items": [
-#                 {
-#                     "story_id": item.story_id,
-#                     "order": item.order
-#                 } for item in bubble.items
-#             ],
-#             "created_at": bubble.created_at,
-#             "updated_at": bubble.updated_at
-#         })
-#     return jsonify(result), 200
 
 @bubbles_bp.route('/bubbles', methods=['GET'])
 @jwt_required()
@@ -200,23 +113,7 @@ def get_bubble_by_id(bubble_id):
         return jsonify({"message": "An unexpected error occurred", "error": str(e)}), 500
 
 
-# @bubbles_bp.route('/bubbles/<int:bubble_id>', methods=['GET'])
-# def get_bubble_by_id(bubble_id):
-#     bubble = Bubble.query.get_or_404(bubble_id)
-#     result = {
-#         "id": bubble.id,
-#         "title": bubble.title,
-#         "size": bubble.size,
-#         "items": [
-#             {
-#                 "story_id": item.story_id,
-#                 "order": item.order
-#             } for item in bubble.items
-#         ],
-#         "created_at": bubble.created_at,
-#         "updated_at": bubble.updated_at
-#     }
-#     return jsonify(result), 200
+
 
 
 @bubbles_bp.route('/bubbles/<int:bubble_id>', methods=['PUT'])
